@@ -9,24 +9,24 @@ services:
       - "8545:8545"
     command: ganache-cli -p 8545
   
-  # btc:
-  #   image: kylemanna/bitcoind
-  #   container_name: btc-testnet
-  #   restart: always      
-  #   volumes:
-  #     - ./efs/bitcoin-data:/bitcoin/.bitcoin
-  #   ports:
-  #     - "18332:18332"
-  #     - "18333:18333"
-  #   environment:
-  #     BITCOIN_DATA: ./efs/bitcoin-data
-  #   command:
-  #     -testnet=1
-  #     -rpcallowip=0.0.0.0/0
-  #     -rpcbind=0.0.0.0
-  #     -rpcuser=user
-  #     -rpcpassword=password
-  #     -server=1
-  #     -wallet=wallet.dat
-  #     -disablewallet=0
+  btc:
+    image: kylemanna/bitcoind
+    container_name: btc-testnet
+    restart: always      
+    volumes:
+      - ./efs/bitcoin-data:/bitcoin/.bitcoin
+    ports:
+      - "18332:18332"
+      - "18333:18333"
+    environment:
+      BITCOIN_DATA: ./efs/bitcoin-data
+    command:
+      -testnet=1
+      -rpcallowip=0.0.0.0/0
+      -rpcbind=0.0.0.0
+      -rpcuser=user
+      -rpcpassword=password
+      -server=1
+      -wallet=wallet.dat
+      -disablewallet=0
   
