@@ -9,7 +9,7 @@ services:
       - "8545:8545"
     command: ganache-cli -p 8545
   
-  bit:
+  btc:
     image: kylemanna/bitcoind
     container_name: btc-testnet
     restart: always      
