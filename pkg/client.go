@@ -2,13 +2,16 @@ package pkg
 
 import (
 	"fmt"
+	"math/big"
 	"sync"
 )
 
 var clientSt *clientManager
 var sOnce sync.Once // guard the initialization of storage
 
-type IClient interface{}
+type IClient interface {
+	GetBalance([]byte) (*big.Int, error)
+}
 
 type clientManager struct {
 	storage map[CoinSymbol]IClient

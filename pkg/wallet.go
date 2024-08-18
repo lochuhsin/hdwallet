@@ -1,10 +1,19 @@
 package pkg
 
-import "fmt"
+import (
+	"crypto/ecdsa"
+	"fmt"
+	"sync"
+)
+
+var walletM *walletManager
+var wOnce sync.Once // guard the initialization of storage
 
 type IWallet interface {
 	GetName() CoinName
 	GetSymbol() CoinSymbol
+	GenExternalKey() (*ecdsa.PrivateKey, error)
+	GenInternalKey() (*ecdsa.PrivateKey, error)
 }
 
 type walletManager struct {
@@ -37,4 +46,14 @@ func newWalletStorage() *walletManager {
 	return &walletManager{
 		wallets: make(map[CoinSymbol]IWallet),
 	}
+}
+
+func InitWalletManager() {
+	wOnce.Do(func() {
+		walletM = newWalletStorage()
+	})
+}
+
+func GetWalletManager() *walletManager {
+	return walletM
 }

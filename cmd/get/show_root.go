@@ -18,4 +18,5 @@ var GetCmd = &cobra.Command{
 
 func init() {
 	GetCmd.AddCommand(configCmd)
+	GetCmd.AddCommand(balanceCmd)
 }

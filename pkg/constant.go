@@ -1,6 +1,6 @@
 package pkg
 
-const FILE_PERMISSIONS = 0666
+import "strings"
 
 type CoinSymbol string
 type CoinType int
@@ -27,7 +27,7 @@ const (
 )
 
 func CoinSelector(symbol string) (CoinSymbol, error) {
-	c := CoinSymbol(symbol)
+	c := CoinSymbol(strings.ToUpper(symbol))
 
 	switch c {
 	case ETH:

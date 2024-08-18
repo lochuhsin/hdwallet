@@ -5,6 +5,7 @@ import (
 	"errors"
 	"sync/atomic"
 
+	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcutil/hdkeychain"
 	"github.com/tyler-smith/go-bip39"
 )
@@ -12,25 +13,22 @@ import (
 type ethWallet struct {
 	mnemonic     MnemonicConfig
 	masterKey    *hdkeychain.ExtendedKey
-	internalKeys []*ecdsa.PrivateKey
-	externalKeys []*ecdsa.PrivateKey
 	sym          CoinSymbol
 	name         CoinName
 	addressIndex atomic.Int64
+	privateKeys  []*ecdsa.PrivateKey
 	accountId    int
 }
 
 func getEthWallet(config MnemonicConfig) (*ethWallet, error) {
 	seed := bip39.NewSeed(config.MN, config.SupportWord)
-	k, err := hdkeychain.NewMaster(seed, nil)
+	k, err := hdkeychain.NewMaster(seed, &chaincfg.MainNetParams)
 	if err != nil {
 		return nil, err
 	}
 	return &ethWallet{
 		mnemonic:     config,
 		masterKey:    k,
-		internalKeys: []*ecdsa.PrivateKey{},
-		externalKeys: []*ecdsa.PrivateKey{},
 		sym:          ETH,
 		name:         ETH_N,
 		addressIndex: atomic.Int64{},
@@ -46,24 +44,22 @@ func (e *ethWallet) GetName() CoinName {
 	return e.name
 }
 
-func (e *ethWallet) GenExternalKey() error {
+func (e *ethWallet) GenExternalKey() (*ecdsa.PrivateKey, error) {
 	k, err := e.genNewKey(0)
-	e.externalKeys = append(e.externalKeys, k)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	e.addressIndex.Add(1)
-	return nil
+	return k, nil
 }
 
-func (e *ethWallet) GenInternalKey() error {
+func (e *ethWallet) GenInternalKey() (*ecdsa.PrivateKey, error) {
 	k, err := e.genNewKey(1)
-	e.internalKeys = append(e.internalKeys, k)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	e.addressIndex.Add(1)
-	return nil
+	return k, nil
 }
 
 func (e *ethWallet) genNewKey(change int) (*ecdsa.PrivateKey, error) {

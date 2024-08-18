@@ -3,7 +3,7 @@ package set
 import (
 	"errors"
 	"fmt"
-	"wallet/pkg"
+	"wallet/cmd/service"
 
 	"github.com/spf13/cobra"
 )
@@ -20,9 +20,9 @@ var mneCmd = &cobra.Command{
 			return
 		}
 		mn := args[0]
-		config := getConfig()
+		config := service.GetConfig()
 		config.Mnemonic = mn
-		if err := pkg.WriteConfig(config); err != nil {
+		if err := service.WriteConfig(config); err != nil {
 			fmt.Println(err)
 			return
 		}

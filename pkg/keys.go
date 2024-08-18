@@ -1,6 +1,12 @@
 package pkg
 
-import "github.com/btcsuite/btcutil/hdkeychain"
+import (
+	"crypto/ecdsa"
+
+	"github.com/btcsuite/btcutil/hdkeychain"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto"
+)
 
 const PURPOSE = 44 // bip44
 
@@ -20,4 +26,8 @@ func deriveKey(master *hdkeychain.ExtendedKey, coinType int, accountId int, chan
 		key = k
 	}
 	return key, nil
+}
+
+func EncodePrivateKeyToHex(key *ecdsa.PrivateKey) string {
+	return hexutil.Encode(crypto.FromECDSA(key))
 }

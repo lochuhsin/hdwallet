@@ -1,12 +1,9 @@
 package set
 
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 import (
 	"errors"
 	"fmt"
-	"strings"
+	"wallet/cmd/service"
 	"wallet/pkg"
 
 	"github.com/spf13/cobra"
@@ -18,8 +15,8 @@ func isValidCoinHost(coin, host string) error {
 	if coin == "" || host == "" {
 		return FlagMissingError
 	}
-	upper := strings.ToUpper(coin)
-	symbol, err := pkg.CoinSelector(upper)
+
+	symbol, err := pkg.CoinSelector(coin)
 	if err != nil {
 		return err
 	}
@@ -55,11 +52,11 @@ var networkCmd = &cobra.Command{
 			return
 		}
 
-		config := getConfig()
+		config := service.GetConfig()
 		obj := config.Symbols[coin]
 		obj.Network = host
 		config.Symbols[coin] = obj
-		if err := pkg.WriteConfig(config); err != nil {
+		if err := service.WriteConfig(config); err != nil {
 			fmt.Println(err)
 			return
 		}

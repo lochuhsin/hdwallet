@@ -2,7 +2,7 @@ package get
 
 import (
 	"fmt"
-	"wallet/pkg"
+	"wallet/cmd/service"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
@@ -14,12 +14,12 @@ var configCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		config, err := pkg.ReadConfig()
+		config, err := service.ReadConfig()
 		if err != nil {
 			fmt.Printf("Unable to read config: %s \n", err)
 			fmt.Println("Setting up default config")
-			config = pkg.NewConfig()
-			err := pkg.WriteConfig(config)
+			config = service.NewConfig()
+			err := service.WriteConfig(config)
 			if err != nil {
 				fmt.Println(err)
 			}
