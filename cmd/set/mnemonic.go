@@ -19,23 +19,10 @@ var mneCmd = &cobra.Command{
 			fmt.Println("Specify at least one args for mnemonic")
 			return
 		}
-
 		mn := args[0]
-
-		config, err := pkg.ReadConfig()
-		if err != nil {
-			fmt.Printf("Unable to read config: %s \n", err)
-			fmt.Println("Setting up default config")
-			config = pkg.NewConfig()
-			err := pkg.WriteConfig(config)
-			if err != nil {
-				fmt.Println(err)
-			}
-		}
-
+		config := getConfig()
 		config.Mnemonic = mn
-		err = pkg.WriteConfig(config)
-		if err != nil {
+		if err := pkg.WriteConfig(config); err != nil {
 			fmt.Println(err)
 			return
 		}

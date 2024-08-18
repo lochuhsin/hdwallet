@@ -5,8 +5,8 @@ package cmd
 
 import (
 	"os"
+	"wallet/cmd/get"
 	"wallet/cmd/set"
-	"wallet/cmd/show"
 
 	"github.com/spf13/cobra"
 )
@@ -45,6 +45,6 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	RootCmd.AddCommand(set.SetCmd)
-	RootCmd.AddCommand(show.ShowCmd)
+	RootCmd.AddCommand(get.GetCmd)
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

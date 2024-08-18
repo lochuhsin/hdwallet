@@ -54,6 +54,15 @@ var networkCmd = &cobra.Command{
 			fmt.Println(err)
 			return
 		}
+
+		config := getConfig()
+		obj := config.Symbols[coin]
+		obj.Network = host
+		config.Symbols[coin] = obj
+		if err := pkg.WriteConfig(config); err != nil {
+			fmt.Println(err)
+			return
+		}
 	},
 }
 

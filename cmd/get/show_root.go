@@ -1,15 +1,15 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 */
-package show
+package get
 
 import (
 	"github.com/spf13/cobra"
 )
 
-// ShowCmd represents the set command
-var ShowCmd = &cobra.Command{
-	Use:   "show",
+// GetCmd represents the set command
+var GetCmd = &cobra.Command{
+	Use:   "get",
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -17,5 +17,5 @@ var ShowCmd = &cobra.Command{
 }
 
 func init() {
-	ShowCmd.AddCommand(showConfigCmd)
+	GetCmd.AddCommand(configCmd)
 }

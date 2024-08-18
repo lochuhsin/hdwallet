@@ -1,4 +1,4 @@
-package show
+package get
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 )
 
 // ShowCmd represents the set command
-var showConfigCmd = &cobra.Command{
+var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "",
 	Long:  ``,
