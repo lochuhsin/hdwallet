@@ -46,5 +46,6 @@ func init() {
 	// when this action is called directly.
 	RootCmd.AddCommand(set.SetCmd)
 	RootCmd.AddCommand(get.GetCmd)
+	RootCmd.AddCommand(testCmd)
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

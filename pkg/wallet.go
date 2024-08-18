@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"crypto/ecdsa"
 	"errors"
 	"fmt"
 	"sync"
@@ -12,7 +13,9 @@ var wOnce sync.Once // guard the initialization of storage
 type IWallet interface {
 	GetName() CoinName
 	GetSymbol() CoinSymbol
+	GetNetwork() string
 	NewPrivateKey() (string, error)
+	getPrivateKeys() []*ecdsa.PrivateKey
 }
 
 type walletManager struct {
@@ -57,6 +60,7 @@ type walletConfig struct {
 	supportWord string
 	accountId   int
 	privateKeys []string
+	network     string
 }
 
 func newWalletConfig() walletConfig {
@@ -65,6 +69,7 @@ func newWalletConfig() walletConfig {
 		mnemonic:    "",
 		supportWord: "",
 		accountId:   0,
+		network:     "",
 	}
 }
 
@@ -94,6 +99,12 @@ func SetAccountId(id int) WalletOpt {
 	}
 }
 
+func SetNetwork(network string) WalletOpt {
+	return func(w *walletConfig) {
+		w.network = network
+	}
+}
+
 func walletSelector(type_ CoinSymbol, opts ...WalletOpt) (IWallet, error) {
 	wConfig := newWalletConfig()
 	for _, opt := range opts {
@@ -102,7 +113,7 @@ func walletSelector(type_ CoinSymbol, opts ...WalletOpt) (IWallet, error) {
 
 	switch type_ {
 	case ETH:
-		return getEthWallet(wConfig)
+		return GetEthWallet(wConfig)
 	default:
 		return nil, fmt.Errorf("Unsupported CoinType: %v", type_)
 	}

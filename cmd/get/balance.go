@@ -64,11 +64,17 @@ var balanceCmd = &cobra.Command{
 		if !validateCoinConfig(symConfig) {
 			return
 		}
-		_, err = pkg.GetWalletManager().NewWallet(coinSym, pkg.SetMnemonic(config.Mnemonic), pkg.SetSupportWord(config.SupportWord), pkg.SetPrivateKeys(symConfig.PrivateKeys))
+		_, err = pkg.GetWalletManager().NewWallet(coinSym, pkg.SetMnemonic(config.Mnemonic), pkg.SetSupportWord(config.SupportWord), pkg.SetPrivateKeys(symConfig.PrivateKeys), pkg.SetNetwork(symConfig.Network))
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
+		balance, err := pkg.GetBalance(coinSym)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Printf("your balance %v \n", balance.Int64())
 	},
 }
 

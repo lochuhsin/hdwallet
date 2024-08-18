@@ -10,7 +10,7 @@ var clientSt *clientManager
 var sOnce sync.Once // guard the initialization of storage
 
 type IClient interface {
-	GetBalance([]byte) (*big.Int, error)
+	GetBalance(address []byte) (*big.Int, error)
 }
 
 type clientManager struct {

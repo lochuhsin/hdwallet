@@ -2,34 +2,48 @@ package pkg
 
 import (
 	"crypto/ecdsa"
+	"fmt"
 	"sync/atomic"
 
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcutil/hdkeychain"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/tyler-smith/go-bip39"
 )
 
 type ethw struct {
-	mnemonic     string
-	supportWord  string
+	mnemonic    string
+	supportWord string
+	network     string
+	privateKeys []*ecdsa.PrivateKey
+	accountId   int
+	//
 	masterKey    *hdkeychain.ExtendedKey
 	sym          CoinSymbol
 	name         CoinName
-	privateKeys  []*ecdsa.PrivateKey
-	accountId    int
 	addressIndex atomic.Int64
 }
 
-func getEthWallet(config walletConfig) (*ethw, error) {
+func GetEthWallet(config walletConfig) (*ethw, error) {
 	seed := bip39.NewSeed(config.mnemonic, config.supportWord)
 	k, err := hdkeychain.NewMaster(seed, &chaincfg.MainNetParams)
 	if err != nil {
 		return nil, err
 	}
+
+	pks := make([]*ecdsa.PrivateKey, len(config.privateKeys))
+	for i, k := range config.privateKeys {
+		pk, err := crypto.HexToECDSA(k)
+		if err != nil {
+			return nil, err
+		}
+		pks[i] = pk
+	}
 	return &ethw{
 		mnemonic:     config.mnemonic,
 		supportWord:  config.supportWord,
-		privateKeys:  []*ecdsa.PrivateKey{},
+		network:      config.network,
+		privateKeys:  pks,
 		masterKey:    k,
 		addressIndex: atomic.Int64{},
 		accountId:    0,
@@ -58,7 +72,16 @@ func (e *ethw) NewPrivateKey() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	key := EncodePrivateKeyToHex(btcecPK.ToECDSA())
+	key := fmt.Sprintf("%x", btcecPK.Serialize())
 	e.addressIndex.Add(1)
 	return key, nil
+}
+
+// figure out a way to separate network, and the relation between wallet and client
+func (e *ethw) GetNetwork() string {
+	return e.network
+}
+
+func (e *ethw) getPrivateKeys() []*ecdsa.PrivateKey {
+	return e.privateKeys
 }
