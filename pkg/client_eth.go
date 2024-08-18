@@ -8,21 +8,21 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-type etherClient struct {
+type ethClient struct {
 	client *ethclient.Client
 }
 
-func (e *etherClient) GetBalance(address []byte) (*big.Int, error) {
+func (e *ethClient) GetBalance(address []byte) (*big.Int, error) {
 	addr := common.BytesToAddress(address)
 	return e.client.BalanceAt(context.Background(), addr, nil)
 }
 
-func initEthClient(network string) (*etherClient, error) {
+func initEthClient(network string) (*ethClient, error) {
 	cli, err := ethclient.Dial(network)
 	if err != nil {
 		return nil, err
 	}
-	return &etherClient{
+	return &ethClient{
 		client: cli,
 	}, nil
 }

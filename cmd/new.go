@@ -21,8 +21,8 @@ func createMnemonic() string {
 
 	}
 	fmt.Println("mnemonic:")
-	fmt.Printf("%s \n", mn.MN)
-	return mn.MN
+	fmt.Printf("%s \n", mn)
+	return mn
 }
 
 // newCmd represents the new command
@@ -62,15 +62,14 @@ var newCmd = &cobra.Command{
 				fmt.Println(err)
 				return
 			}
-			wallet, err := pkg.GetWalletManager().GetWallet(coinSym, pkg.MnemonicConfig{MN: config.Mnemonic})
+			wallet, err := pkg.GetWalletManager().NewWallet(coinSym, pkg.SetMnemonic(config.Mnemonic), pkg.SetSupportWord(config.SupportWord))
 			if err != nil {
 				fmt.Println(err)
 				return
 			}
-			pk, err := wallet.GenExternalKey()
-			hex := pkg.EncodePrivateKeyToHex(pk)
+			pk, err := wallet.NewPrivateKey()
 			symConfig := config.Symbols[string(coinSym)]
-			symConfig.PrivateKeys = []string{hex}
+			symConfig.PrivateKeys = []string{pk}
 			config.Symbols[string(coinSym)] = symConfig
 			service.WriteConfig(config)
 		}

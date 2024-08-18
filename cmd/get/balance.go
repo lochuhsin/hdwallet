@@ -36,6 +36,10 @@ var balanceCmd = &cobra.Command{
 	PreRun: func(cmd *cobra.Command, args []string) {
 		pkg.InitClientStorage()
 		pkg.InitWalletManager()
+		/**
+		 * We should setup the wallet manager from here on
+		 */
+
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		coin, err := cmd.Flags().GetString("coin")
@@ -60,9 +64,7 @@ var balanceCmd = &cobra.Command{
 		if !validateCoinConfig(symConfig) {
 			return
 		}
-		_, err = pkg.GetWalletManager().GetWallet(coinSym, pkg.MnemonicConfig{
-			MN: config.Mnemonic,
-		})
+		_, err = pkg.GetWalletManager().NewWallet(coinSym, pkg.SetMnemonic(config.Mnemonic), pkg.SetSupportWord(config.SupportWord), pkg.SetPrivateKeys(symConfig.PrivateKeys))
 		if err != nil {
 			fmt.Println(err)
 			return

@@ -2,7 +2,6 @@ package pkg
 
 import (
 	"crypto/ecdsa"
-	"errors"
 	"sync/atomic"
 
 	"github.com/btcsuite/btcd/chaincfg"
@@ -10,69 +9,56 @@ import (
 	"github.com/tyler-smith/go-bip39"
 )
 
-type ethWallet struct {
-	mnemonic     MnemonicConfig
+type ethw struct {
+	mnemonic     string
+	supportWord  string
 	masterKey    *hdkeychain.ExtendedKey
 	sym          CoinSymbol
 	name         CoinName
-	addressIndex atomic.Int64
 	privateKeys  []*ecdsa.PrivateKey
 	accountId    int
+	addressIndex atomic.Int64
 }
 
-func getEthWallet(config MnemonicConfig) (*ethWallet, error) {
-	seed := bip39.NewSeed(config.MN, config.SupportWord)
+func getEthWallet(config walletConfig) (*ethw, error) {
+	seed := bip39.NewSeed(config.mnemonic, config.supportWord)
 	k, err := hdkeychain.NewMaster(seed, &chaincfg.MainNetParams)
 	if err != nil {
 		return nil, err
 	}
-	return &ethWallet{
-		mnemonic:     config,
+	return &ethw{
+		mnemonic:     config.mnemonic,
+		supportWord:  config.supportWord,
+		privateKeys:  []*ecdsa.PrivateKey{},
 		masterKey:    k,
-		sym:          ETH,
-		name:         ETH_N,
 		addressIndex: atomic.Int64{},
 		accountId:    0,
+		sym:          ETH,
+		name:         ETH_N,
 	}, nil
 }
 
-func (e *ethWallet) GetSymbol() CoinSymbol {
+func (e *ethw) GetSymbol() CoinSymbol {
 	return e.sym
 }
 
-func (e *ethWallet) GetName() CoinName {
+func (e *ethw) GetName() CoinName {
 	return e.name
 }
 
-func (e *ethWallet) GenExternalKey() (*ecdsa.PrivateKey, error) {
-	k, err := e.genNewKey(0)
+func (e *ethw) NewPrivateKey() (string, error) {
+	// TODO: if we need internal network keys, implement new one,
+	// and set to 1
+	change := 0
+	childKey, err := deriveKey(e.masterKey, int(ETH_T), e.accountId, change, int(e.addressIndex.Load()))
 	if err != nil {
-		return nil, err
-	}
-	e.addressIndex.Add(1)
-	return k, nil
-}
-
-func (e *ethWallet) GenInternalKey() (*ecdsa.PrivateKey, error) {
-	k, err := e.genNewKey(1)
-	if err != nil {
-		return nil, err
-	}
-	e.addressIndex.Add(1)
-	return k, nil
-}
-
-func (e *ethWallet) genNewKey(change int) (*ecdsa.PrivateKey, error) {
-	if change != 0 && change != 1 {
-		return nil, errors.New("invalid change number, must be 0 or 1")
-	}
-	childKey, err := deriveKey(e.masterKey, int(ETH_T), e.accountId, 1, int(e.addressIndex.Load()))
-	if err != nil {
-		return nil, err
+		return "", err
 	}
 	btcecPK, err := childKey.ECPrivKey()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return btcecPK.ToECDSA(), nil
+	key := EncodePrivateKeyToHex(btcecPK.ToECDSA())
+	e.addressIndex.Add(1)
+	return key, nil
 }
