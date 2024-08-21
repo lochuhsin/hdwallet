@@ -1,16 +1,20 @@
 package pkg
 
 import (
+	"crypto/ecdsa"
 	"fmt"
 	"math/big"
 	"sync"
+
+	"github.com/ethereum/go-ethereum/common"
 )
 
 var clientSt *clientManager
 var sOnce sync.Once // guard the initialization of storage
 
 type IClient interface {
-	GetBalance(address []byte) (*big.Int, error)
+	GetBalance(address []byte) (*big.Float, error)
+	SendTransaction(privateKeys []*ecdsa.PrivateKey, to *common.Address, amount float64) error
 }
 
 type clientManager struct {

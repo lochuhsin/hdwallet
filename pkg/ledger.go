@@ -3,6 +3,7 @@ package pkg
 import (
 	"math/big"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
@@ -24,21 +25,31 @@ func getWalletClientPair(coin CoinSymbol) (IWallet, IClient, error) {
 	}
 }
 
-func GetBalance(coin CoinSymbol) (*big.Int, error) {
-	wallet, client, err := getWalletClientPair(coin)
+func GetBalance(coin CoinSymbol) (*big.Float, error) {
+	w, c, err := getWalletClientPair(coin)
 	if err != nil {
 		return nil, err
 	}
 
-	balance := big.NewInt(0)
-	for _, pk := range wallet.getPrivateKeys() {
-		address := crypto.PubkeyToAddress(pk.PublicKey)
-
-		b, err := client.GetBalance(address.Bytes())
+	tb := big.NewFloat(0)
+	for _, pk := range w.getPrivateKeys() {
+		b, err := c.GetBalance(crypto.PubkeyToAddress(pk.PublicKey).Bytes())
 		if err != nil {
 			return nil, err
 		}
-		balance = balance.Add(balance, b)
+		tb = tb.Add(tb, b)
 	}
-	return balance, nil
+	return tb, nil
+}
+
+func MakeTransaction(coin CoinSymbol, to string, amount float64) error {
+	w, c, err := getWalletClientPair(coin)
+	if err != nil {
+		return err
+	}
+
+	pks := w.getPrivateKeys()
+	addr := common.HexToAddress(to)
+	c.SendTransaction(pks, &addr, amount)
+	return nil
 }

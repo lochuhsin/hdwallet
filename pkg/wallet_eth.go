@@ -13,7 +13,7 @@ import (
 
 type ethw struct {
 	mnemonic    string
-	supportWord string
+	password    string
 	network     string
 	privateKeys []*ecdsa.PrivateKey
 	accountId   int
@@ -25,7 +25,7 @@ type ethw struct {
 }
 
 func GetEthWallet(config walletConfig) (*ethw, error) {
-	seed := bip39.NewSeed(config.mnemonic, config.supportWord)
+	seed := bip39.NewSeed(config.mnemonic, config.password)
 	k, err := hdkeychain.NewMaster(seed, &chaincfg.MainNetParams)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func GetEthWallet(config walletConfig) (*ethw, error) {
 	}
 	return &ethw{
 		mnemonic:     config.mnemonic,
-		supportWord:  config.supportWord,
+		password:     config.password,
 		network:      config.network,
 		privateKeys:  pks,
 		masterKey:    k,

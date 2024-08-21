@@ -62,15 +62,15 @@ var newCmd = &cobra.Command{
 				fmt.Println(err)
 				return
 			}
-			wallet, err := pkg.GetWalletManager().NewWallet(coinSym, pkg.SetMnemonic(config.Mnemonic), pkg.SetSupportWord(config.SupportWord))
+			wallet, err := pkg.GetWalletManager().NewWallet(coinSym, pkg.SetMnemonic(config.Mnemonic), pkg.SetPassword(config.Password))
 			if err != nil {
 				fmt.Println(err)
 				return
 			}
 			pk, err := wallet.NewPrivateKey()
-			symConfig := config.Symbols[string(coinSym)]
+			symConfig := config.Symbols[coinSym]
 			symConfig.PrivateKeys = []string{pk}
-			config.Symbols[string(coinSym)] = symConfig
+			config.Symbols[coinSym] = symConfig
 			service.WriteConfig(config)
 		}
 	},

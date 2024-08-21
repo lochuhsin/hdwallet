@@ -19,4 +19,6 @@ var SetCmd = &cobra.Command{
 func init() {
 	SetCmd.AddCommand(networkCmd)
 	SetCmd.AddCommand(mneCmd)
+	SetCmd.AddCommand(passwordCmd)
+	SetCmd.AddCommand(privatekeyCmd)
 }

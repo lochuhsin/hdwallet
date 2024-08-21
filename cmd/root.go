@@ -5,7 +5,9 @@ package cmd
 
 import (
 	"os"
+	"wallet/cmd/create"
 	"wallet/cmd/get"
+	"wallet/cmd/reset"
 	"wallet/cmd/set"
 
 	"github.com/spf13/cobra"
@@ -46,6 +48,8 @@ func init() {
 	// when this action is called directly.
 	RootCmd.AddCommand(set.SetCmd)
 	RootCmd.AddCommand(get.GetCmd)
+	RootCmd.AddCommand(create.CreateCmd)
 	RootCmd.AddCommand(testCmd)
+	RootCmd.AddCommand(reset.ResetCmd)
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

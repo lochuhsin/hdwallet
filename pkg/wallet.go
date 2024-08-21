@@ -31,12 +31,12 @@ func (w *walletManager) GetWallet(type_ CoinSymbol) (IWallet, error) {
 }
 
 func (w *walletManager) NewWallet(type_ CoinSymbol, opts ...WalletOpt) (IWallet, error) {
-	client, err := walletSelector(type_, opts...)
+	wallet, err := walletSelector(type_, opts...)
 	if err != nil {
 		return nil, err
 	}
-	w.wallets[type_] = client
-	return client, nil
+	w.wallets[type_] = wallet
+	return wallet, nil
 }
 
 func newWalletStorage() *walletManager {
@@ -57,7 +57,7 @@ func GetWalletManager() *walletManager {
 
 type walletConfig struct {
 	mnemonic    string
-	supportWord string
+	password    string
 	accountId   int
 	privateKeys []string
 	network     string
@@ -67,7 +67,7 @@ func newWalletConfig() walletConfig {
 	return walletConfig{
 		privateKeys: []string{},
 		mnemonic:    "",
-		supportWord: "",
+		password:    "",
 		accountId:   0,
 		network:     "",
 	}
@@ -81,9 +81,9 @@ func SetMnemonic(mnemonic string) WalletOpt {
 	}
 }
 
-func SetSupportWord(supportWord string) WalletOpt {
+func SetPassword(password string) WalletOpt {
 	return func(w *walletConfig) {
-		w.supportWord = supportWord
+		w.password = password
 	}
 }
 

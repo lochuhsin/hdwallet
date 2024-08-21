@@ -24,7 +24,7 @@ var testCmd = &cobra.Command{
 		config := service.GetConfig()
 
 		coinSym, _ := pkg.CoinSelector("eth")
-		wallet, err := pkg.GetWalletManager().NewWallet(coinSym, pkg.SetMnemonic(config.Mnemonic), pkg.SetSupportWord(config.SupportWord))
+		wallet, err := pkg.GetWalletManager().NewWallet(coinSym, pkg.SetMnemonic(config.Mnemonic), pkg.SetPassword(config.Password))
 		pk, _ := wallet.NewPrivateKey()
 		_, err = crypto.HexToECDSA(pk)
 		if err != nil {

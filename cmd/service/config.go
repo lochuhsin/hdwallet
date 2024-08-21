@@ -11,33 +11,31 @@ import (
 )
 
 type SymbolConfig struct {
-	Network             string   `yaml:"network"`
-	PrivateKeys         []string `yaml:"privatekeys"`
-	InternalPrivateKeys []string `yaml:"internalprivatekeys"`
+	Network     string   `yaml:"network"`
+	PrivateKeys []string `yaml:"privatekeys"`
+	Index       int      `yaml:"index"`
+}
+
+func NewSymbolConfig() SymbolConfig {
+	return SymbolConfig{
+		Network:     "",
+		Index:       0,
+		PrivateKeys: []string{},
+	}
 }
 
 type Config struct {
-	Mnemonic    string                  `yaml:"mnemonic"`
-	SupportWord string                  `yaml:"supportword"`
-	Symbols     map[string]SymbolConfig `yaml:"symbols"`
+	Mnemonic string                          `yaml:"mnemonic"`
+	Password string                          `yaml:"password"`
+	Symbols  map[pkg.CoinSymbol]SymbolConfig `yaml:"symbols"`
 }
 
 func NewConfig() Config {
 	return Config{
-		Mnemonic:    "",
-		SupportWord: "",
-		Symbols:     make(map[string]SymbolConfig),
+		Mnemonic: "",
+		Password: "",
+		Symbols:  make(map[pkg.CoinSymbol]SymbolConfig),
 	}
-}
-
-func ValidateConfig(config Config) error {
-	for s := range config.Symbols {
-		_, err := pkg.CoinSelector(s)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 func WriteConfig(config Config) error {

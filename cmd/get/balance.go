@@ -33,10 +33,6 @@ var balanceCmd = &cobra.Command{
 	PreRun: func(cmd *cobra.Command, args []string) {
 		pkg.InitClientStorage()
 		pkg.InitWalletManager()
-		/**
-		 * We should setup the wallet manager from here on
-		 */
-
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		coin, err := cmd.Flags().GetString("coin")
@@ -54,14 +50,14 @@ var balanceCmd = &cobra.Command{
 			fmt.Println(coinSym)
 			return
 		}
-		symConfig, ok := config.Symbols[string(coinSym)]
+		symConfig, ok := config.Symbols[coinSym]
 		if !ok {
 			fmt.Printf("missing %s coin configuration", coinSym)
 		}
 		if !validateCoinConfig(symConfig) {
 			return
 		}
-		_, err = pkg.GetWalletManager().NewWallet(coinSym, pkg.SetMnemonic(config.Mnemonic), pkg.SetSupportWord(config.SupportWord), pkg.SetPrivateKeys(symConfig.PrivateKeys), pkg.SetNetwork(symConfig.Network))
+		_, err = pkg.GetWalletManager().NewWallet(coinSym, pkg.SetMnemonic(config.Mnemonic), pkg.SetPassword(config.Password), pkg.SetPrivateKeys(symConfig.PrivateKeys), pkg.SetNetwork(symConfig.Network))
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -71,7 +67,7 @@ var balanceCmd = &cobra.Command{
 			fmt.Println(err)
 			return
 		}
-		fmt.Printf("your balance %v \n", balance.Int64())
+		fmt.Printf("your balance %v \n", balance.String())
 	},
 }
 
